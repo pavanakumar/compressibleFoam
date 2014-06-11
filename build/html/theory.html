@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>compressibleFoam Theory &mdash; compressibleFoam v1.0 - Home Page</title>
+    <link rel="stylesheet" href="_static/traditional.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="compressibleFoam v1.0 - Home Page" href="index.html" />
+    <link rel="next" title="OpenFOAM implementation" href="of_tut.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="of_tut.html" title="OpenFOAM implementation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">compressibleFoam v1.0 - Home Page</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="figure">
+<img alt="_images/logo_small.png" src="_images/logo_small.png" />
+</div>
+<div class="section" id="compressiblefoam-theory">
+<h1>compressibleFoam Theory<a class="headerlink" href="#compressiblefoam-theory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="finite-volume-methods-for-euler-s-equation">
+<h2>Finite Volume Methods for Euler&#8217;s Equation<a class="headerlink" href="#finite-volume-methods-for-euler-s-equation" title="Permalink to this headline">¶</a></h2>
+<p>In the present chapter, we briefly derive the discretized finite volume scheme for the invscid compressible Euler&#8217;s equations. The formulation is cell-centered with first order accuracy. The implementation of the same using OpenFOAM libraries is discussed. Finally, the parallelization of the solver using OpenFOAM library is discussed.</p>
+</div>
+<div class="section" id="governing-equations">
+<h2>Governing Equations<a class="headerlink" href="#governing-equations" title="Permalink to this headline">¶</a></h2>
+<p>Shown in equations <a href="#equation-comp_euler_cont">(1)</a>-<a href="#equation-comp_euler_energy">(3)</a> are the compressible Euler equations in conservative form. The momentum equation <a href="#equation-comp_euler_mom">(2)</a> is arranged such that the flow variables are on the left hand side and the driving potential terms are on the right.</p>
+<div class="math" id="equation-comp_euler_cont">
+<p><span class="eqno">(1)</span><img src="_images/math/e32d05e55407c93b2a3a6694efe071b749542a82.png" alt="\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0" /></p>
+</div><div class="math" id="equation-comp_euler_mom">
+<p><span class="eqno">(2)</span><img src="_images/math/7c08408817d45650172abee31c293e362e2bdb7d.png" alt="\frac{\partial (\rho \mathbf{u})}{\partial t}+ \nabla \cdot (\rho \mathbf{u} \otimes \mathbf{u}) = -\nabla p + \rho \mathbf{f}" /></p>
+</div><div class="math" id="equation-comp_euler_energy">
+<p><span class="eqno">(3)</span><img src="_images/math/8cbb88facc771ca78aa7aaed28e6fbe2aca87a54.png" alt="\frac{\partial (\rho e)}{\partial t}+ \nabla \cdot (\rho \mathbf{u} e ) = -\nabla \cdot (p \mathbf{u})" /></p>
+</div><p>The governing equations used for the CFD calculations are the compressible Euler&#8217;s equations in Cartesian coordinates. The equations were introduced in differential form in equations <a href="#equation-comp_euler_cont">(1)</a>- <a href="#equation-comp_euler_energy">(3)</a>, but for the finite volume discretization, the integral form of the equations is employed. The integral equations in vector form is shown in equation <a href="#equation-euler_src_integral">(4)</a>.</p>
+<div class="math" id="equation-euler_src_integral">
+<p><span class="eqno">(4)</span><img src="_images/math/f4eeceef07ce3bd3fbbe30d808961bbd51b4f7ca.png" alt="\int_V{\dot{Q} dV} + \int_S{\mathbf{n}\cdot \mathbf{F} }  = 0" /></p>
+</div><p>where,</p>
+<div class="math" id="equation-dummy_1">
+<p><span class="eqno">(5)</span><img src="_images/math/697639cc7bd8f1c8baa480a8b707dce49c89df11.png" alt="Q = \left[ \begin{array}{c}
+\rho \\
+\rho u \\
+\rho v \\
+\rho w \\
+e  \end{array} \right],
+\hspace{15pt}
+F_n = \mathbf{n \cdot F} = \left[ \begin{array}{c}
+\rho \bar{u} \\
+\rho u \bar{u} +p n_x\\
+\rho v \bar{u} +p n_y \\
+\rho w \bar{u} +p n_z \\
+e \bar{u}  + p u_n \end{array} \right]" /></p>
+</div><p>The vector <img class="math" src="_images/math/50be5fb64407dd4f6ac2ae0484e9c58fcf40521d.png" alt="\mathbf{n}(n_x,n_y,n_z)"/> is the unit outward pointing normal of the surface of integration <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/>. The dot on top of any variable denotes differentiation with respect to time. The fluid velocity vector is <img class="math" src="_images/math/8e20809d253f574cb574fb605cb8fffe58a2c091.png" alt="\mathbf{u}(u,v,w)"/> and the grid velocity is denoted by <img class="math" src="_images/math/1c39926efbcdc7d77c9337f5d48dd8e1761aec2d.png" alt="\mathbf{v}"/>. The quantity <img class="math" src="_images/math/3e0d153d53ca6c59c57ece9749df7f0d6c806ed9.png" alt="u_n=\mathbf{n \cdot u}"/> and <img class="math" src="_images/math/7dd65789d5d0db242336462b890250e8a40539a0.png" alt="v_n=\mathbf{n \cdot v}"/> are the velocity components in the normal direction. Similarly, we have <img class="math" src="_images/math/d3853824450eb50c24c3200f18c67efbefdc0c37.png" alt="\bar{u}=\mathbf{n \cdot (u - v)}=u_n-v_n"/>.</p>
+</div>
+<div class="section" id="finite-volume-discretization">
+<h2>Finite Volume Discretization<a class="headerlink" href="#finite-volume-discretization" title="Permalink to this headline">¶</a></h2>
+<p>The volume integrals in equation <a href="#equation-euler_src_integral">(4)</a> are evaluated using the cell center value <img class="math" src="_images/math/f7cb4816fde9bed625c12812229bd236b6592a8c.png" alt="Q_c"/> (piecewise constant) and the cell volume <img class="math" src="_images/math/24edc419058015022fc9ef15fb0f5d8ec3109f73.png" alt="V_c"/> as shown in equation <a href="#equation-approx_vol_int">(6)</a>.</p>
+<div class="math" id="equation-approx_vol_int">
+<p><span class="eqno">(6)</span><img src="_images/math/7e9bb6509d0efe4f2e352656bfed13de99638986.png" alt="\int_V{QdV} \approx Q_c V_c" /></p>
+</div><div class="figure" id="piecewise-const-reconst">
+<img alt="_images/piecewise_const_reconst.png" src="_images/piecewise_const_reconst.png" />
+<p class="caption">Piecewise-constant reconstruction</p>
+</div>
+<p>In this piecewise-constant reconstruction one has to solve a local Riemann problem at every edge indicated by the fractional indices <img class="math" src="_images/math/b4b263b816de8a051c80f0c1d2514f980fa2696a.png" alt="i+1/2$, $i-1/2"/> shown in figure <a class="reference internal" href="#piecewise-const-reconst"><em>Piecewise-constant reconstruction</em></a>. The face average flux <img class="math" src="_images/math/b842b4552478b69732a9aea702309d8c51e43056.png" alt="F_n"/> (piecewise-constant) is approximated as the face center value and it is obtained by solving the Riemann problem at the cell edge (given the left and right states). Introducing the above approximations, the discretized equation can be written as shown in equation :eq:euler_src_integral_discrete.</p>
+<div class="math" id="equation-euler_src_integral_discrete">
+<p><span class="eqno">(7)</span><img src="_images/math/d132402d3d98a06cf94fc2775d2e0c5e2b88532c.png" alt="\dot{Q_c} + \sum_{i}^{n}{\frac{F_n S_i}{V_i}}  = 0" /></p>
+</div><p>The flux <img class="math" src="_images/math/b842b4552478b69732a9aea702309d8c51e43056.png" alt="F_n"/> can be evaluated using an Approximate Riemann solver for example the Roe scheme, using the left and right states of a face <img class="math" src="_images/math/bacc96c223e8d9a1fc093edcdd408cd6b92f8d17.png" alt="Q_L"/> and <img class="math" src="_images/math/32f7f6d5ee28b3840274033f4c936a5af6f4709e.png" alt="Q_R"/> as shown in equation (:eq:roe_scheme).</p>
+<div class="math" id="equation-roe_scheme">
+<p><span class="eqno">(8)</span><img src="_images/math/62cc77ee42be1e32d6404df090ba2f1d75fc46e9.png" alt="\hat{F}_{approx}(Q_L,Q_R,S)=\frac{1}{2}\left[\hat{F}(Q_L,S)+\hat{F}(Q_R,S) - \|\tilde{A}(Q_L,Q_R,S)\|(Q_R-Q_L)\right]" /></p>
+</div><p>The discrete equation shown in equation <a href="#equation-euler_src_integral_discrete">(7)</a> can be rearranged and written in a semi-discrete form as an Ordinary Differential Equation (ODE) shown in equation <a href="#equation-rk_lu">(9)</a>. The operator <img class="math" src="_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L"/> consists of the discrete flux operator and the contribution due to source term. The explicit Euler time integration method has been implemented to solve this ODE as shown in equation <a href="#equation-euler_t">(10)</a>.</p>
+<div class="math" id="equation-rk_lu">
+<p><span class="eqno">(9)</span><img src="_images/math/6d0ea25fd0830a9e020e52e0f621d109751537fb.png" alt="\dot{Q} = L[Q]" /></p>
+</div><div class="math" id="equation-euler_t">
+<p><span class="eqno">(10)</span><img src="_images/math/d4bb733cbacd1f4c1832a087dd266c2d34d120d8.png" alt="Q^{n+1} = Q^n + \frac{\Delta t}{v_{cell}} L[Q^n]" /></p>
+</div><p>where, <img class="math" src="_images/math/a1ffc0a012620941fe660cedabff822ce7162eca.png" alt="\Delta t"/> is the time step and <img class="math" src="_images/math/13dd86a3d34250a1ad12414f3d60163d2a06d24d.png" alt="v_{cell}"/> is the cell volume. <img class="math" src="_images/math/dca63afb8075bdaba88630a880e0e39ead656184.png" alt="L[Q^n]"/> is the right hand side of the discrete equation (residue).</p>
+</div>
+<div class="section" id="local-time-stepping-lts">
+<h2>Local Time Stepping (LTS)<a class="headerlink" href="#local-time-stepping-lts" title="Permalink to this headline">¶</a></h2>
+<p>The solution is accelerated to steady state using the local time stepping (LTS). In equation <a href="#equation-euler_t">(10)</a> the <img class="math" src="_images/math/2222ddf7e710683dcf921a73827a47f19dfd8ccf.png" alt="\frac{\Delta t}{v_{cell}}"/> term is replaced by the CFL number (<img class="math" src="_images/math/38f90affde4558a00e3815a195c021eade94cb22.png" alt="N_c"/>) and local maximum eigenvalue integral as shown in equation <a href="#equation-lts">(11)</a>.</p>
+<div class="math" id="equation-lts">
+<p><span class="eqno">(11)</span><img src="_images/math/6d53d2d054c98cec9228fc6d97cc9c7786ec0d82.png" alt="\frac{\Delta t}{v_{cell}} = \frac{N_c}{ \displaystyle\sum_{i=1}^{N_f} \left( |U_n| + a \right) dS }" /></p>
+</div><p>where, <img class="math" src="_images/math/0b8e50b09cbf2bc5c3193f6c664b1799c826dc01.png" alt="N_f"/> is the total number of faces in a cell and <img class="math" src="_images/math/3e2c53dbc3c17c33d08b41dccb15128506af23dc.png" alt="dS"/> is the face area of the <img class="math" src="_images/math/ffbd55597272a9914166c5dd1e71a5d23d842ddd.png" alt="i^{th}"/> face.</p>
+</div>
+<div class="section" id="boundary-condition">
+<h2>Boundary Condition<a class="headerlink" href="#boundary-condition" title="Permalink to this headline">¶</a></h2>
+<p>The following types of boundary conditions have been implemented, namely,</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Supersonic Inflow</li>
+<li>Extrapolated Outflow</li>
+<li>Slip-wall</li>
+<li>Riemann Extrapolation</li>
+<li>Implicit non-reflecting boundary condition</li>
+</ol>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="of_tut.html" title="OpenFOAM implementation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">compressibleFoam v1.0 - Home Page</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Pavanakumar Mohanamuraly.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
