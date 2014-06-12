@@ -119,12 +119,102 @@ e \bar{u}  + p u_n \end{array} \right]" /></p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>Supersonic Inflow</li>
-<li>Extrapolated Outflow</li>
-<li>Slip-wall</li>
-<li>Riemann Extrapolation</li>
-<li>Implicit non-reflecting boundary condition</li>
 </ol>
 </div></blockquote>
+<p>As the name suggests, these boundary conditions are imposed when the Mach number of the the flow entering or leaving the boundary of the computational domain is fully supersonic. Therefore, there is no influence of the downwind disturbances. One can make use of this property and prescribe the inflow/outflow boundary conditions. For a supersonic inflow boundary face, the flow parameters at the inlet are used to obtain the fluxes. For a supersonic outflow boundary face, the solution state extrapolated from within the interior computational domain is used for calculating the fluxes across that face.</p>
+<blockquote>
+<div><ol class="arabic simple" start="2">
+<li>Slip-wall</li>
+</ol>
+</div></blockquote>
+<p>The slip wall boundary condition physically imposes a zero mass flux crossing the rigid wall. This can be written mathematically as <img class="math" src="_images/math/b9872cd33a0cef06618e6160a4dab602dabf41d1.png" alt="u_n = 0"/>. This immediately suggests the following numerical flux formulation for the wall boundary face,</p>
+<div class="math" id="equation-wall_bc">
+<p><span class="eqno">(12)</span><img src="_images/math/0adc81061f530476d0d6300d46a9bb0c79c6c160.png" alt="F_n^{wall} = \left[
+\begin{array}{c}
+\rho u_n \\
+\rho u u_n + p n_x \\
+\rho v u_n + p n_y \\
+\rho w u_n + p n_z \\
+(e + p ) u_n
+\end{array}
+\right]
+= \left[
+\begin{array}{c}
+0 \\
+p n_x \\
+p n_y \\
+p n_z \\
+0
+\end{array}
+\right]" /></p>
+</div><p>The pressure value at the wall boundary face is usually computed by extrapolation from the interior computational domain. The nearest cell centroid value extrapolation has been implemented in the present work.</p>
+<blockquote>
+<div><ol class="arabic simple" start="3">
+<li>Riemann Extrapolation</li>
+</ol>
+</div></blockquote>
+<p>The Riemann invariants for the 1D Euler&#8217;s equation (isentropic flow assumption) can be utilized as far-field boundary conditions by making a 1D flow assumption normal to the boundary face. If the far-field is sufficiently away from wall boundaries isentropic flow assumption is valid. The invariants <img class="math" src="_images/math/16910b2013a67ae97971bc5a8a8873959a79377d.png" alt="r_1,r_2"/> and <img class="math" src="_images/math/5ae5f496b8ddda88b5cbbc06ccb02bee0580fd0b.png" alt="r_3"/> normal to a given finite volume interface is defined in equations shown below,</p>
+<div class="math">
+<p><img src="_images/math/6808b4d268b5a3c71656d98a54acc709c7e49abf.png" alt="r_1 = u_n + \frac{2 a }{\gamma - 1}, \hspace{5pt} r_2 = u_n + \frac{2 a }{\gamma - 1},
+\hspace{5pt} and \hspace{5pt} r_3 = \frac{p}{ \rho^{\gamma} }" /></p>
+</div><p>One can detect the direction of propagation at the far-field boundary based on the sign of the Eigenvalues, which are defined as,</p>
+<div class="math">
+<p><img src="_images/math/8228993c293409f7b1e4fb37a0e52139b82b01b4.png" alt="\lambda_1 = u_n + a, \hspace{5pt} \lambda_2 = u_n - a,
+\hspace{5pt} and \hspace{5pt} \lambda_3 = u_n" /></p>
+</div><p>where, <img class="math" src="_images/math/4a62a262f68e1adce9d45fadca13dcfd7cc99ce6.png" alt="u_n"/> is the normal velocity to the interface and <img class="math" src="_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> is the speed of sound at the interface. Based on the signs of the two variables four different cases can be considered as follows,</p>
+<blockquote>
+<div><ul class="simple">
+<li>Supersonic Outflow (<img class="math" src="_images/math/0fc77b599e2e218fa48b89e3fc2f392325109d7a.png" alt="u_n \geq 0"/> and <img class="math" src="_images/math/4cc4b0125ef3ce353b9e53ec449adba27e3e0771.png" alt="|u_n| \geq a"/>)</li>
+</ul>
+</div></blockquote>
+<p>The boundary condition is exactly same as that in previous section.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Supersonic Inflow (<img class="math" src="_images/math/64be93a2db3bd5fc798397525a4609d798f85b6b.png" alt="u_n &lt; 0"/> and <img class="math" src="_images/math/4cc4b0125ef3ce353b9e53ec449adba27e3e0771.png" alt="|u_n| \geq a"/>)}</li>
+</ul>
+</div></blockquote>
+<p>The boundary condition is exactly same as that in previous section.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Subsonic Outflow (<img class="math" src="_images/math/0fc77b599e2e218fa48b89e3fc2f392325109d7a.png" alt="u_n \geq 0"/> and <img class="math" src="_images/math/bfe25fb13b0171a37bf19234cd1fe31287073d1b.png" alt="|u_n| &lt; a"/>)</li>
+</ul>
+</div></blockquote>
+<p>In this case, <img class="math" src="_images/math/9ec7a3a2ea64cb88f615d72da91eb63ed54db55f.png" alt="\lambda_1 &gt; 0, \hspace{5pt} \lambda_2 &lt; 0 \hspace{5pt} and \hspace{5pt} \lambda_3 &gt; 0"/>, which means that two characteristic waves are outgoing and one wave is incoming. The boundary values are then determined as follows,</p>
+<div class="math">
+<p><img src="_images/math/bc3ae852116b9fbd26171cd7978455e799112927.png" alt="\begin{eqnarray}
+u_n + a &gt; 0 &amp;\Longrightarrow&amp; r_{1f} = r_{1e}\nonumber \\
+u_n - a &lt; 0 &amp;\Longrightarrow&amp; r_{2f} = r_{2 \infty }\\
+u_n &gt; 0 &amp;\Longrightarrow&amp; r_{3f} = r_{3e} \nonumber \\
+u_{nf} &amp;=&amp; \frac{ r_{1e} - r_{2 \infty} }{ 2 } \\
+a_f &amp;=&amp; \frac{\gamma - 1 }{4} ( r_{1e} - r_{2\infty}) \\
+u_{\parallel f,1} &amp;=&amp; u_{\parallel e,1} \\
+u_{\parallel f,2} &amp;=&amp; u_{\parallel e,2} \\
+\rho_f &amp;=&amp; \rho_e \\
+a_f &amp;=&amp; \sqrt{ \frac{\gamma p_f }{ \rho_f} }
+\end{eqnarray}" /></p>
+</div><p>Note that the subscripts <img class="math" src="_images/math/60cae8405b16ede47d922e1b84b996cf28234d76.png" alt="n, \hspace{5pt} \parallel, \hspace{5pt} f, \hspace{5pt} e"/> and <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty"/> denote values normal/parallel to the boundary face, boundary cell values (unknowns), extrapolated value from interior and free-stream value respectively.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Subsonic Inflow (<img class="math" src="_images/math/64be93a2db3bd5fc798397525a4609d798f85b6b.png" alt="u_n &lt; 0"/> and <img class="math" src="_images/math/bfe25fb13b0171a37bf19234cd1fe31287073d1b.png" alt="|u_n| &lt; a"/>)</li>
+</ul>
+</div></blockquote>
+<p>In this case, <img class="math" src="_images/math/22c4b090b07c3eeb003252b13c526f72ae099757.png" alt="\lambda_1 &gt; 0, \hspace{5pt} \lambda_2 &lt; 0"/> and <img class="math" src="_images/math/4cf9b4fb535914ee5ed3fdca9d4011b0747354a7.png" alt="\lambda_3 &lt; 0"/>, which means that one characteristic wave is outgoing and two waves are incoming. The boundary values are then determined as follows,</p>
+<div class="math">
+<p><img src="_images/math/eca6ccbff73ea8dfdf543b9a41be10dac43f85fb.png" alt="\begin{eqnarray}
+u_n + a &gt; 0 &amp;\Longrightarrow&amp; r_{1f} = r_{1e}\nonumber \\
+u_n - a &lt; 0 &amp;\Longrightarrow&amp; r_{2f} = r_{2 \infty }\\
+u_n &lt; 0 &amp;\Longrightarrow&amp; r_{3f} = r_{3 \infty} \nonumber \\
+u_{nf} &amp;=&amp; \frac{ r_{1e} - r_{2 \infty} }{ 2 } \\
+a_f &amp;=&amp; \frac{\gamma - 1 }{4} ( r_{1e} - r_{2\infty}) \\
+u_{\parallel f,1} &amp;=&amp; u_{\parallel e,1} \\
+u_{\parallel f,2} &amp;=&amp; u_{\parallel e,2} \\
+\rho_f &amp;=&amp; \rho_{\infty} \\
+a_f &amp;=&amp; \sqrt{ \frac{\gamma p_f }{ \rho_f} }
+\end{eqnarray}" /></p>
+</div><ol class="arabic simple" start="4">
+<li>Implicit non-reflecting boundary condition</li>
+</ol>
+<p>Implicit boundary conditions are quite necessary for implementing Jacobian Free Newton-Krylov (JFNK) methods. Unlike the previous case, implicit non-reflecting boundary conditions fixes the normal boundary fluxes and not the boundary values. This way one ensures that the effect of boundary is implied in the residual calculation. Here one extrapolates the interior values for the left state and fix free-stream conditions as the right state and invokes the approximate Riemann flux solver to obtain the interfacial boundary fluxes and they are summed up to the neighboring cell residual. The implicit boundary described above is a weak boundary condition and hence is preferred more than the Riemann extrapolation due to the improved stability.</p>
 </div>
 </div>
 

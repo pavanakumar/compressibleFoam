@@ -104,8 +104,103 @@ Boundary Condition
 The following types of boundary conditions have been implemented, namely, 
 
   1. Supersonic Inflow
-  2. Extrapolated Outflow
-  3. Slip-wall
-  4. Riemann Extrapolation
-  5. Implicit non-reflecting boundary condition
+
+As the name suggests, these boundary conditions are imposed when the Mach number of the the flow entering or leaving the boundary of the computational domain is fully supersonic. Therefore, there is no influence of the downwind disturbances. One can make use of this property and prescribe the inflow/outflow boundary conditions. For a supersonic inflow boundary face, the flow parameters at the inlet are used to obtain the fluxes. For a supersonic outflow boundary face, the solution state extrapolated from within the interior computational domain is used for calculating the fluxes across that face.
+
+  2. Slip-wall
+
+The slip wall boundary condition physically imposes a zero mass flux crossing the rigid wall. This can be written mathematically as :math:`u_n = 0`. This immediately suggests the following numerical flux formulation for the wall boundary face,
+
+.. math::
+  F_n^{wall} = \left[
+  \begin{array}{c}
+  \rho u_n \\
+  \rho u u_n + p n_x \\
+  \rho v u_n + p n_y \\
+  \rho w u_n + p n_z \\
+  (e + p ) u_n
+  \end{array} 
+  \right]
+  = \left[
+  \begin{array}{c}
+  0 \\
+  p n_x \\
+  p n_y \\
+  p n_z \\
+  0
+  \end{array} 
+  \right]
+  :label: wall_bc
+
+The pressure value at the wall boundary face is usually computed by extrapolation from the interior computational domain. The nearest cell centroid value extrapolation has been implemented in the present work.
+
+  3. Riemann Extrapolation
+
+The Riemann invariants for the 1D Euler's equation (isentropic flow assumption) can be utilized as far-field boundary conditions by making a 1D flow assumption normal to the boundary face. If the far-field is sufficiently away from wall boundaries isentropic flow assumption is valid. The invariants :math:`r_1,r_2` and :math:`r_3` normal to a given finite volume interface is defined in equations shown below,
+
+.. math::
+  r_1 = u_n + \frac{2 a }{\gamma - 1}, \hspace{5pt} r_2 = u_n + \frac{2 a }{\gamma - 1},
+  \hspace{5pt} and \hspace{5pt} r_3 = \frac{p}{ \rho^{\gamma} }
+
+One can detect the direction of propagation at the far-field boundary based on the sign of the Eigenvalues, which are defined as,
+
+.. math::
+  \lambda_1 = u_n + a, \hspace{5pt} \lambda_2 = u_n - a,
+  \hspace{5pt} and \hspace{5pt} \lambda_3 = u_n
+
+where, :math:`u_n` is the normal velocity to the interface and :math:`a` is the speed of sound at the interface. Based on the signs of the two variables four different cases can be considered as follows,
+
+  * Supersonic Outflow (:math:`u_n \geq 0` and :math:`|u_n| \geq a`)
+
+The boundary condition is exactly same as that in previous section.
+
+  * Supersonic Inflow (:math:`u_n < 0` and :math:`|u_n| \geq a`)}
+
+The boundary condition is exactly same as that in previous section.
+
+  * Subsonic Outflow (:math:`u_n \geq 0` and :math:`|u_n| < a`)
+
+In this case, :math:`\lambda_1 > 0, \hspace{5pt} \lambda_2 < 0 \hspace{5pt} and \hspace{5pt} \lambda_3 > 0`, which means that two characteristic waves are outgoing and one wave is incoming. The boundary values are then determined as follows,
+
+.. math::
+  :nowrap:
+
+  \begin{eqnarray}
+  u_n + a > 0 &\Longrightarrow& r_{1f} = r_{1e}\nonumber \\
+  u_n - a < 0 &\Longrightarrow& r_{2f} = r_{2 \infty }\\
+  u_n > 0 &\Longrightarrow& r_{3f} = r_{3e} \nonumber \\
+  u_{nf} &=& \frac{ r_{1e} - r_{2 \infty} }{ 2 } \\
+  a_f &=& \frac{\gamma - 1 }{4} ( r_{1e} - r_{2\infty}) \\
+  u_{\parallel f,1} &=& u_{\parallel e,1} \\
+  u_{\parallel f,2} &=& u_{\parallel e,2} \\
+  \rho_f &=& \rho_e \\
+  a_f &=& \sqrt{ \frac{\gamma p_f }{ \rho_f} }
+  \end{eqnarray}
+
+Note that the subscripts :math:`n, \hspace{5pt} \parallel, \hspace{5pt} f, \hspace{5pt} e` and :math:`\infty` denote values normal/parallel to the boundary face, boundary cell values (unknowns), extrapolated value from interior and free-stream value respectively.
+
+  * Subsonic Inflow (:math:`u_n < 0` and :math:`|u_n| < a`)
+
+In this case, :math:`\lambda_1 > 0, \hspace{5pt} \lambda_2 < 0` and :math:`\lambda_3 < 0`, which means that one characteristic wave is outgoing and two waves are incoming. The boundary values are then determined as follows,
+
+.. math::
+  :nowrap:
+
+  \begin{eqnarray}
+  u_n + a > 0 &\Longrightarrow& r_{1f} = r_{1e}\nonumber \\
+  u_n - a < 0 &\Longrightarrow& r_{2f} = r_{2 \infty }\\
+  u_n < 0 &\Longrightarrow& r_{3f} = r_{3 \infty} \nonumber \\
+  u_{nf} &=& \frac{ r_{1e} - r_{2 \infty} }{ 2 } \\
+  a_f &=& \frac{\gamma - 1 }{4} ( r_{1e} - r_{2\infty}) \\
+  u_{\parallel f,1} &=& u_{\parallel e,1} \\
+  u_{\parallel f,2} &=& u_{\parallel e,2} \\
+  \rho_f &=& \rho_{\infty} \\
+  a_f &=& \sqrt{ \frac{\gamma p_f }{ \rho_f} }
+  \end{eqnarray}
+
+
+4. Implicit non-reflecting boundary condition
+
+Implicit boundary conditions are quite necessary for implementing Jacobian Free Newton-Krylov (JFNK) methods. Unlike the previous case, implicit non-reflecting boundary conditions fixes the normal boundary fluxes and not the boundary values. This way one ensures that the effect of boundary is implied in the residual calculation. Here one extrapolates the interior values for the left state and fix free-stream conditions as the right state and invokes the approximate Riemann flux solver to obtain the interfacial boundary fluxes and they are summed up to the neighboring cell residual. The implicit boundary described above is a weak boundary condition and hence is preferred more than the Riemann extrapolation due to the improved stability.
+
 
