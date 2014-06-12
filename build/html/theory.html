@@ -1,17 +1,19 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>compressibleFoam Theory &mdash; compressibleFoam v1.0 - Home Page</title>
+    <title>Theory &mdash; compressibleFoam v1.0 - Home Page</title>
+    
     <link rel="stylesheet" href="_static/traditional.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -22,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="compressibleFoam v1.0 - Home Page" href="index.html" />
-    <link rel="next" title="OpenFOAM implementation" href="of_tut.html" />
+    <link rel="next" title="Implementation" href="of_tut.html" />
     <link rel="prev" title="Installation" href="install.html" /> 
   </head>
   <body>
@@ -33,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="of_tut.html" title="OpenFOAM implementation"
+          <a href="of_tut.html" title="Implementation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installation"
@@ -49,8 +51,8 @@
   <div class="figure">
 <img alt="_images/logo_small.png" src="_images/logo_small.png" />
 </div>
-<div class="section" id="compressiblefoam-theory">
-<h1>compressibleFoam Theory<a class="headerlink" href="#compressiblefoam-theory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="theory">
+<h1>Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="finite-volume-methods-for-euler-s-equation">
 <h2>Finite Volume Methods for Euler&#8217;s Equation<a class="headerlink" href="#finite-volume-methods-for-euler-s-equation" title="Permalink to this headline">¶</a></h2>
 <p>In the present chapter, we briefly derive the discretized finite volume scheme for the invscid compressible Euler&#8217;s equations. The formulation is cell-centered with first order accuracy. The implementation of the same using OpenFOAM libraries is discussed. Finally, the parallelization of the solver using OpenFOAM library is discussed.</p>
@@ -59,17 +61,17 @@
 <h2>Governing Equations<a class="headerlink" href="#governing-equations" title="Permalink to this headline">¶</a></h2>
 <p>Shown in equations <a href="#equation-comp_euler_cont">(1)</a>-<a href="#equation-comp_euler_energy">(3)</a> are the compressible Euler equations in conservative form. The momentum equation <a href="#equation-comp_euler_mom">(2)</a> is arranged such that the flow variables are on the left hand side and the driving potential terms are on the right.</p>
 <div class="math" id="equation-comp_euler_cont">
-<p><span class="eqno">(1)</span><img src="_images/math/e32d05e55407c93b2a3a6694efe071b749542a82.png" alt="\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0" /></p>
+<p><span class="eqno">(1)</span><img src="_images/math/42b7297210f3b5c690e4dd4cb9f77428d319a9cd.png" alt="\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0"/></p>
 </div><div class="math" id="equation-comp_euler_mom">
-<p><span class="eqno">(2)</span><img src="_images/math/7c08408817d45650172abee31c293e362e2bdb7d.png" alt="\frac{\partial (\rho \mathbf{u})}{\partial t}+ \nabla \cdot (\rho \mathbf{u} \otimes \mathbf{u}) = -\nabla p + \rho \mathbf{f}" /></p>
+<p><span class="eqno">(2)</span><img src="_images/math/dd4a7c8cf07e44e1ba55b08787a0c155b397d7c5.png" alt="\frac{\partial (\rho \mathbf{u})}{\partial t}+ \nabla \cdot (\rho \mathbf{u} \otimes \mathbf{u}) = -\nabla p + \rho \mathbf{f}"/></p>
 </div><div class="math" id="equation-comp_euler_energy">
-<p><span class="eqno">(3)</span><img src="_images/math/8cbb88facc771ca78aa7aaed28e6fbe2aca87a54.png" alt="\frac{\partial (\rho e)}{\partial t}+ \nabla \cdot (\rho \mathbf{u} e ) = -\nabla \cdot (p \mathbf{u})" /></p>
+<p><span class="eqno">(3)</span><img src="_images/math/07e267e1f71e166cab7a80a0c39cda8a3b2e69cc.png" alt="\frac{\partial (\rho e)}{\partial t}+ \nabla \cdot (\rho \mathbf{u} e ) = -\nabla \cdot (p \mathbf{u})"/></p>
 </div><p>The governing equations used for the CFD calculations are the compressible Euler&#8217;s equations in Cartesian coordinates. The equations were introduced in differential form in equations <a href="#equation-comp_euler_cont">(1)</a>- <a href="#equation-comp_euler_energy">(3)</a>, but for the finite volume discretization, the integral form of the equations is employed. The integral equations in vector form is shown in equation <a href="#equation-euler_src_integral">(4)</a>.</p>
 <div class="math" id="equation-euler_src_integral">
-<p><span class="eqno">(4)</span><img src="_images/math/f4eeceef07ce3bd3fbbe30d808961bbd51b4f7ca.png" alt="\int_V{\dot{Q} dV} + \int_S{\mathbf{n}\cdot \mathbf{F} }  = 0" /></p>
+<p><span class="eqno">(4)</span><img src="_images/math/af15b9e96c3def128611cef1f8b15b97a06d8e98.png" alt="\int_V{\dot{Q} dV} + \int_S{\mathbf{n}\cdot \mathbf{F} }  = 0"/></p>
 </div><p>where,</p>
 <div class="math" id="equation-dummy_1">
-<p><span class="eqno">(5)</span><img src="_images/math/697639cc7bd8f1c8baa480a8b707dce49c89df11.png" alt="Q = \left[ \begin{array}{c}
+<p><span class="eqno">(5)</span><img src="_images/math/4128486f267603876bb622424d3bd59c4c823b0d.png" alt="Q = \left[ \begin{array}{c}
 \rho \\
 \rho u \\
 \rho v \\
@@ -81,37 +83,37 @@ F_n = \mathbf{n \cdot F} = \left[ \begin{array}{c}
 \rho u \bar{u} +p n_x\\
 \rho v \bar{u} +p n_y \\
 \rho w \bar{u} +p n_z \\
-e \bar{u}  + p u_n \end{array} \right]" /></p>
-</div><p>The vector <img class="math" src="_images/math/50be5fb64407dd4f6ac2ae0484e9c58fcf40521d.png" alt="\mathbf{n}(n_x,n_y,n_z)"/> is the unit outward pointing normal of the surface of integration <img class="math" src="_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/>. The dot on top of any variable denotes differentiation with respect to time. The fluid velocity vector is <img class="math" src="_images/math/8e20809d253f574cb574fb605cb8fffe58a2c091.png" alt="\mathbf{u}(u,v,w)"/> and the grid velocity is denoted by <img class="math" src="_images/math/1c39926efbcdc7d77c9337f5d48dd8e1761aec2d.png" alt="\mathbf{v}"/>. The quantity <img class="math" src="_images/math/3e0d153d53ca6c59c57ece9749df7f0d6c806ed9.png" alt="u_n=\mathbf{n \cdot u}"/> and <img class="math" src="_images/math/7dd65789d5d0db242336462b890250e8a40539a0.png" alt="v_n=\mathbf{n \cdot v}"/> are the velocity components in the normal direction. Similarly, we have <img class="math" src="_images/math/d3853824450eb50c24c3200f18c67efbefdc0c37.png" alt="\bar{u}=\mathbf{n \cdot (u - v)}=u_n-v_n"/>.</p>
+e \bar{u}  + p u_n \end{array} \right]"/></p>
+</div><p>The vector <img class="math" src="_images/math/0f3640865777dc785ce908dd589d16f9d09ccaab.png" alt="\mathbf{n}(n_x,n_y,n_z)"/> is the unit outward pointing normal of the surface of integration <img class="math" src="_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/>. The dot on top of any variable denotes differentiation with respect to time. The fluid velocity vector is <img class="math" src="_images/math/1815f6d13768ef44c17561a3d2b69be9dca6902a.png" alt="\mathbf{u}(u,v,w)"/> and the grid velocity is denoted by <img class="math" src="_images/math/d44ca12044ca1da7d898eb60f5d96559c9aa5c6c.png" alt="\mathbf{v}"/>. The quantity <img class="math" src="_images/math/ef6897f8c59bcc12dbfc4580d4d5954506066b66.png" alt="u_n=\mathbf{n \cdot u}"/> and <img class="math" src="_images/math/09ade89656efe8c7a3da55e06267efbec1c16117.png" alt="v_n=\mathbf{n \cdot v}"/> are the velocity components in the normal direction. Similarly, we have <img class="math" src="_images/math/25399b51328c31fc4e969f3246fcfdb95504ad5b.png" alt="\bar{u}=\mathbf{n \cdot (u - v)}=u_n-v_n"/>.</p>
 </div>
 <div class="section" id="finite-volume-discretization">
 <h2>Finite Volume Discretization<a class="headerlink" href="#finite-volume-discretization" title="Permalink to this headline">¶</a></h2>
-<p>The volume integrals in equation <a href="#equation-euler_src_integral">(4)</a> are evaluated using the cell center value <img class="math" src="_images/math/f7cb4816fde9bed625c12812229bd236b6592a8c.png" alt="Q_c"/> (piecewise constant) and the cell volume <img class="math" src="_images/math/24edc419058015022fc9ef15fb0f5d8ec3109f73.png" alt="V_c"/> as shown in equation <a href="#equation-approx_vol_int">(6)</a>.</p>
+<p>The volume integrals in equation <a href="#equation-euler_src_integral">(4)</a> are evaluated using the cell center value <img class="math" src="_images/math/ce3b337afc1ff77d24314fac97ab81138e7f5efe.png" alt="Q_c"/> (piecewise constant) and the cell volume <img class="math" src="_images/math/db94af9f89e3d01956eca6e0dc1be147b0bd4246.png" alt="V_c"/> as shown in equation <a href="#equation-approx_vol_int">(6)</a>.</p>
 <div class="math" id="equation-approx_vol_int">
-<p><span class="eqno">(6)</span><img src="_images/math/7e9bb6509d0efe4f2e352656bfed13de99638986.png" alt="\int_V{QdV} \approx Q_c V_c" /></p>
+<p><span class="eqno">(6)</span><img src="_images/math/16ab492503f69c2b04f0fdf971f5b8e83819da63.png" alt="\int_V{QdV} \approx Q_c V_c"/></p>
 </div><div class="figure" id="piecewise-const-reconst">
 <img alt="_images/piecewise_const_reconst.png" src="_images/piecewise_const_reconst.png" />
 <p class="caption">Piecewise-constant reconstruction</p>
 </div>
-<p>In this piecewise-constant reconstruction one has to solve a local Riemann problem at every edge indicated by the fractional indices <img class="math" src="_images/math/b4b263b816de8a051c80f0c1d2514f980fa2696a.png" alt="i+1/2$, $i-1/2"/> shown in figure <a class="reference internal" href="#piecewise-const-reconst"><em>Piecewise-constant reconstruction</em></a>. The face average flux <img class="math" src="_images/math/b842b4552478b69732a9aea702309d8c51e43056.png" alt="F_n"/> (piecewise-constant) is approximated as the face center value and it is obtained by solving the Riemann problem at the cell edge (given the left and right states). Introducing the above approximations, the discretized equation can be written as shown in equation :eq:euler_src_integral_discrete.</p>
+<p>In this piecewise-constant reconstruction one has to solve a local Riemann problem at every edge indicated by the fractional indices <img class="math" src="_images/math/6d4c1c72ef22b5be9f1171ba9c14fc9a765c541b.png" alt="i+1/2$, $i-1/2"/> shown in figure <a class="reference internal" href="#piecewise-const-reconst"><em>Piecewise-constant reconstruction</em></a>. The face average flux <img class="math" src="_images/math/bacdaf2f979238c05ec1690cd4777be7056b07d7.png" alt="F_n"/> (piecewise-constant) is approximated as the face center value and it is obtained by solving the Riemann problem at the cell edge (given the left and right states). Introducing the above approximations, the discretized equation can be written as shown in equation :eq:euler_src_integral_discrete.</p>
 <div class="math" id="equation-euler_src_integral_discrete">
-<p><span class="eqno">(7)</span><img src="_images/math/d132402d3d98a06cf94fc2775d2e0c5e2b88532c.png" alt="\dot{Q_c} + \sum_{i}^{n}{\frac{F_n S_i}{V_i}}  = 0" /></p>
-</div><p>The flux <img class="math" src="_images/math/b842b4552478b69732a9aea702309d8c51e43056.png" alt="F_n"/> can be evaluated using an Approximate Riemann solver for example the Roe scheme, using the left and right states of a face <img class="math" src="_images/math/bacc96c223e8d9a1fc093edcdd408cd6b92f8d17.png" alt="Q_L"/> and <img class="math" src="_images/math/32f7f6d5ee28b3840274033f4c936a5af6f4709e.png" alt="Q_R"/> as shown in equation (:eq:roe_scheme).</p>
+<p><span class="eqno">(7)</span><img src="_images/math/dcd680904ab4889698d37a3da918c23b53df4a72.png" alt="\dot{Q_c} + \sum_{i}^{n}{\frac{F_n S_i}{V_i}}  = 0"/></p>
+</div><p>The flux <img class="math" src="_images/math/bacdaf2f979238c05ec1690cd4777be7056b07d7.png" alt="F_n"/> can be evaluated using an Approximate Riemann solver for example the Roe scheme, using the left and right states of a face <img class="math" src="_images/math/b32f1400dcc7efc8367353bc853b359748cb8fa1.png" alt="Q_L"/> and <img class="math" src="_images/math/ebf18e1010d28f4ad3c54419730a514ccf53ab1a.png" alt="Q_R"/> as shown in equation (:eq:roe_scheme).</p>
 <div class="math" id="equation-roe_scheme">
-<p><span class="eqno">(8)</span><img src="_images/math/62cc77ee42be1e32d6404df090ba2f1d75fc46e9.png" alt="\hat{F}_{approx}(Q_L,Q_R,S)=\frac{1}{2}\left[\hat{F}(Q_L,S)+\hat{F}(Q_R,S) - \|\tilde{A}(Q_L,Q_R,S)\|(Q_R-Q_L)\right]" /></p>
-</div><p>The discrete equation shown in equation <a href="#equation-euler_src_integral_discrete">(7)</a> can be rearranged and written in a semi-discrete form as an Ordinary Differential Equation (ODE) shown in equation <a href="#equation-rk_lu">(9)</a>. The operator <img class="math" src="_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L"/> consists of the discrete flux operator and the contribution due to source term. The explicit Euler time integration method has been implemented to solve this ODE as shown in equation <a href="#equation-euler_t">(10)</a>.</p>
+<p><span class="eqno">(8)</span><img src="_images/math/354cf5a27442ede5d4c014aae72fea69c28a1ac4.png" alt="\hat{F}_{approx}(Q_L,Q_R,S)=\frac{1}{2}\left[\hat{F}(Q_L,S)+\hat{F}(Q_R,S) - \|\tilde{A}(Q_L,Q_R,S)\|(Q_R-Q_L)\right]"/></p>
+</div><p>The discrete equation shown in equation <a href="#equation-euler_src_integral_discrete">(7)</a> can be rearranged and written in a semi-discrete form as an Ordinary Differential Equation (ODE) shown in equation <a href="#equation-rk_lu">(9)</a>. The operator <img class="math" src="_images/math/0a5711c7a37994043b2bc3bb374adca232491762.png" alt="L"/> consists of the discrete flux operator and the contribution due to source term. The explicit Euler time integration method has been implemented to solve this ODE as shown in equation <a href="#equation-euler_t">(10)</a>.</p>
 <div class="math" id="equation-rk_lu">
-<p><span class="eqno">(9)</span><img src="_images/math/6d0ea25fd0830a9e020e52e0f621d109751537fb.png" alt="\dot{Q} = L[Q]" /></p>
+<p><span class="eqno">(9)</span><img src="_images/math/20f9523902202e081cc447b01133f231b8f522c7.png" alt="\dot{Q} = L[Q]"/></p>
 </div><div class="math" id="equation-euler_t">
-<p><span class="eqno">(10)</span><img src="_images/math/d4bb733cbacd1f4c1832a087dd266c2d34d120d8.png" alt="Q^{n+1} = Q^n + \frac{\Delta t}{v_{cell}} L[Q^n]" /></p>
-</div><p>where, <img class="math" src="_images/math/a1ffc0a012620941fe660cedabff822ce7162eca.png" alt="\Delta t"/> is the time step and <img class="math" src="_images/math/13dd86a3d34250a1ad12414f3d60163d2a06d24d.png" alt="v_{cell}"/> is the cell volume. <img class="math" src="_images/math/dca63afb8075bdaba88630a880e0e39ead656184.png" alt="L[Q^n]"/> is the right hand side of the discrete equation (residue).</p>
+<p><span class="eqno">(10)</span><img src="_images/math/46d857b2c2c2f4f0f8a6d06309b922153e4596cb.png" alt="Q^{n+1} = Q^n + \frac{\Delta t}{v_{cell}} L[Q^n]"/></p>
+</div><p>where, <img class="math" src="_images/math/5b4271afe7fc7c0ee84172e0ad19b82caf450c00.png" alt="\Delta t"/> is the time step and <img class="math" src="_images/math/0dd2ef187600badf40e0cf6fdc66413b718b005e.png" alt="v_{cell}"/> is the cell volume. <img class="math" src="_images/math/31d74952ce03ae656c92dbedca803d4f3db9dc6a.png" alt="L[Q^n]"/> is the right hand side of the discrete equation (residue).</p>
 </div>
 <div class="section" id="local-time-stepping-lts">
 <h2>Local Time Stepping (LTS)<a class="headerlink" href="#local-time-stepping-lts" title="Permalink to this headline">¶</a></h2>
-<p>The solution is accelerated to steady state using the local time stepping (LTS). In equation <a href="#equation-euler_t">(10)</a> the <img class="math" src="_images/math/2222ddf7e710683dcf921a73827a47f19dfd8ccf.png" alt="\frac{\Delta t}{v_{cell}}"/> term is replaced by the CFL number (<img class="math" src="_images/math/38f90affde4558a00e3815a195c021eade94cb22.png" alt="N_c"/>) and local maximum eigenvalue integral as shown in equation <a href="#equation-lts">(11)</a>.</p>
+<p>The solution is accelerated to steady state using the local time stepping (LTS). In equation <a href="#equation-euler_t">(10)</a> the <img class="math" src="_images/math/b70952b5e975d03ccb98174a5558042233511d59.png" alt="\frac{\Delta t}{v_{cell}}"/> term is replaced by the CFL number (<img class="math" src="_images/math/77d24e7593c214754e71f02d3959b027ee45bfde.png" alt="N_c"/>) and local maximum eigenvalue integral as shown in equation <a href="#equation-lts">(11)</a>.</p>
 <div class="math" id="equation-lts">
-<p><span class="eqno">(11)</span><img src="_images/math/6d53d2d054c98cec9228fc6d97cc9c7786ec0d82.png" alt="\frac{\Delta t}{v_{cell}} = \frac{N_c}{ \displaystyle\sum_{i=1}^{N_f} \left( |U_n| + a \right) dS }" /></p>
-</div><p>where, <img class="math" src="_images/math/0b8e50b09cbf2bc5c3193f6c664b1799c826dc01.png" alt="N_f"/> is the total number of faces in a cell and <img class="math" src="_images/math/3e2c53dbc3c17c33d08b41dccb15128506af23dc.png" alt="dS"/> is the face area of the <img class="math" src="_images/math/ffbd55597272a9914166c5dd1e71a5d23d842ddd.png" alt="i^{th}"/> face.</p>
+<p><span class="eqno">(11)</span><img src="_images/math/1661007de3cc838be1e2ef7a03a3e3e7d2e12d95.png" alt="\frac{\Delta t}{v_{cell}} = \frac{N_c}{ \displaystyle\sum_{i=1}^{N_f} \left( |U_n| + a \right) dS }"/></p>
+</div><p>where, <img class="math" src="_images/math/85440b11cef561bc0aedb689a4178b2f1657bd84.png" alt="N_f"/> is the total number of faces in a cell and <img class="math" src="_images/math/ca5e0e3f6da8b2b6a028d4599cd7bcf667c57281.png" alt="dS"/> is the face area of the <img class="math" src="_images/math/2750c514971cce5a92c31c549aeb798cde16bfb8.png" alt="i^{th}"/> face.</p>
 </div>
 <div class="section" id="boundary-condition">
 <h2>Boundary Condition<a class="headerlink" href="#boundary-condition" title="Permalink to this headline">¶</a></h2>
@@ -127,9 +129,9 @@ e \bar{u}  + p u_n \end{array} \right]" /></p>
 <li>Slip-wall</li>
 </ol>
 </div></blockquote>
-<p>The slip wall boundary condition physically imposes a zero mass flux crossing the rigid wall. This can be written mathematically as <img class="math" src="_images/math/b9872cd33a0cef06618e6160a4dab602dabf41d1.png" alt="u_n = 0"/>. This immediately suggests the following numerical flux formulation for the wall boundary face,</p>
+<p>The slip wall boundary condition physically imposes a zero mass flux crossing the rigid wall. This can be written mathematically as <img class="math" src="_images/math/b8689a77f0d7113f16fa9163a2c1446a8164e31d.png" alt="u_n = 0"/>. This immediately suggests the following numerical flux formulation for the wall boundary face,</p>
 <div class="math" id="equation-wall_bc">
-<p><span class="eqno">(12)</span><img src="_images/math/0adc81061f530476d0d6300d46a9bb0c79c6c160.png" alt="F_n^{wall} = \left[
+<p><span class="eqno">(12)</span><img src="_images/math/c49e8acab78dae90616efc1c5ec113f7a1122221.png" alt="F_n^{wall} = \left[
 \begin{array}{c}
 \rho u_n \\
 \rho u u_n + p n_x \\
@@ -146,42 +148,42 @@ p n_y \\
 p n_z \\
 0
 \end{array}
-\right]" /></p>
+\right]"/></p>
 </div><p>The pressure value at the wall boundary face is usually computed by extrapolation from the interior computational domain. The nearest cell centroid value extrapolation has been implemented in the present work.</p>
 <blockquote>
 <div><ol class="arabic simple" start="3">
 <li>Riemann Extrapolation</li>
 </ol>
 </div></blockquote>
-<p>The Riemann invariants for the 1D Euler&#8217;s equation (isentropic flow assumption) can be utilized as far-field boundary conditions by making a 1D flow assumption normal to the boundary face. If the far-field is sufficiently away from wall boundaries isentropic flow assumption is valid. The invariants <img class="math" src="_images/math/16910b2013a67ae97971bc5a8a8873959a79377d.png" alt="r_1,r_2"/> and <img class="math" src="_images/math/5ae5f496b8ddda88b5cbbc06ccb02bee0580fd0b.png" alt="r_3"/> normal to a given finite volume interface is defined in equations shown below,</p>
+<p>The Riemann invariants for the 1D Euler&#8217;s equation (isentropic flow assumption) can be utilized as far-field boundary conditions by making a 1D flow assumption normal to the boundary face. If the far-field is sufficiently away from wall boundaries isentropic flow assumption is valid. The invariants <img class="math" src="_images/math/7fd9bb9760621b28155cb400098a190cdcf276a9.png" alt="r_1,r_2"/> and <img class="math" src="_images/math/e00f5c4eec03b34c656fe92ac238c1d10e9d423d.png" alt="r_3"/> normal to a given finite volume interface is defined in equations shown below,</p>
 <div class="math">
-<p><img src="_images/math/6808b4d268b5a3c71656d98a54acc709c7e49abf.png" alt="r_1 = u_n + \frac{2 a }{\gamma - 1}, \hspace{5pt} r_2 = u_n + \frac{2 a }{\gamma - 1},
-\hspace{5pt} and \hspace{5pt} r_3 = \frac{p}{ \rho^{\gamma} }" /></p>
+<p><img src="_images/math/9499a82b34954f10a1dcb0a4f2e598e6b50caf9b.png" alt="r_1 = u_n + \frac{2 a }{\gamma - 1}, \hspace{5pt} r_2 = u_n + \frac{2 a }{\gamma - 1},
+\hspace{5pt} and \hspace{5pt} r_3 = \frac{p}{ \rho^{\gamma} }"/></p>
 </div><p>One can detect the direction of propagation at the far-field boundary based on the sign of the Eigenvalues, which are defined as,</p>
 <div class="math">
-<p><img src="_images/math/8228993c293409f7b1e4fb37a0e52139b82b01b4.png" alt="\lambda_1 = u_n + a, \hspace{5pt} \lambda_2 = u_n - a,
-\hspace{5pt} and \hspace{5pt} \lambda_3 = u_n" /></p>
-</div><p>where, <img class="math" src="_images/math/4a62a262f68e1adce9d45fadca13dcfd7cc99ce6.png" alt="u_n"/> is the normal velocity to the interface and <img class="math" src="_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> is the speed of sound at the interface. Based on the signs of the two variables four different cases can be considered as follows,</p>
+<p><img src="_images/math/dd864541f97908515f2cc5d34e805619a0890e30.png" alt="\lambda_1 = u_n + a, \hspace{5pt} \lambda_2 = u_n - a,
+\hspace{5pt} and \hspace{5pt} \lambda_3 = u_n"/></p>
+</div><p>where, <img class="math" src="_images/math/c04768046ea8ec3d9e32d092acdc277a9d4a315d.png" alt="u_n"/> is the normal velocity to the interface and <img class="math" src="_images/math/7dd2a5ea01fbd72ad2a58dd1f3d6ecbfde6208a1.png" alt="a"/> is the speed of sound at the interface. Based on the signs of the two variables four different cases can be considered as follows,</p>
 <blockquote>
 <div><ul class="simple">
-<li>Supersonic Outflow (<img class="math" src="_images/math/0fc77b599e2e218fa48b89e3fc2f392325109d7a.png" alt="u_n \geq 0"/> and <img class="math" src="_images/math/4cc4b0125ef3ce353b9e53ec449adba27e3e0771.png" alt="|u_n| \geq a"/>)</li>
+<li>Supersonic Outflow (<img class="math" src="_images/math/e65785428820dfd84f93fa6dfc7a3dc6bd68cf08.png" alt="u_n \geq 0"/> and <img class="math" src="_images/math/fd073174fb2b26c8de5181971e9c24a8cbe9e515.png" alt="|u_n| \geq a"/>)</li>
 </ul>
 </div></blockquote>
 <p>The boundary condition is exactly same as that in previous section.</p>
 <blockquote>
 <div><ul class="simple">
-<li>Supersonic Inflow (<img class="math" src="_images/math/64be93a2db3bd5fc798397525a4609d798f85b6b.png" alt="u_n &lt; 0"/> and <img class="math" src="_images/math/4cc4b0125ef3ce353b9e53ec449adba27e3e0771.png" alt="|u_n| \geq a"/>)}</li>
+<li>Supersonic Inflow (<img class="math" src="_images/math/f4a3cf51b94dced62cf0526de4703666e2acd8fc.png" alt="u_n &lt; 0"/> and <img class="math" src="_images/math/fd073174fb2b26c8de5181971e9c24a8cbe9e515.png" alt="|u_n| \geq a"/>)}</li>
 </ul>
 </div></blockquote>
 <p>The boundary condition is exactly same as that in previous section.</p>
 <blockquote>
 <div><ul class="simple">
-<li>Subsonic Outflow (<img class="math" src="_images/math/0fc77b599e2e218fa48b89e3fc2f392325109d7a.png" alt="u_n \geq 0"/> and <img class="math" src="_images/math/bfe25fb13b0171a37bf19234cd1fe31287073d1b.png" alt="|u_n| &lt; a"/>)</li>
+<li>Subsonic Outflow (<img class="math" src="_images/math/e65785428820dfd84f93fa6dfc7a3dc6bd68cf08.png" alt="u_n \geq 0"/> and <img class="math" src="_images/math/f109589fdff4ce1ad8d0e7efcc6092da578a4a52.png" alt="|u_n| &lt; a"/>)</li>
 </ul>
 </div></blockquote>
-<p>In this case, <img class="math" src="_images/math/9ec7a3a2ea64cb88f615d72da91eb63ed54db55f.png" alt="\lambda_1 &gt; 0, \hspace{5pt} \lambda_2 &lt; 0 \hspace{5pt} and \hspace{5pt} \lambda_3 &gt; 0"/>, which means that two characteristic waves are outgoing and one wave is incoming. The boundary values are then determined as follows,</p>
+<p>In this case, <img class="math" src="_images/math/b18e43f9ef7c8bbd5171bbdff2cf2593aa8b9afa.png" alt="\lambda_1 &gt; 0, \hspace{5pt} \lambda_2 &lt; 0 \hspace{5pt} and \hspace{5pt} \lambda_3 &gt; 0"/>, which means that two characteristic waves are outgoing and one wave is incoming. The boundary values are then determined as follows,</p>
 <div class="math">
-<p><img src="_images/math/bc3ae852116b9fbd26171cd7978455e799112927.png" alt="\begin{eqnarray}
+<p><img src="_images/math/46077408b271acc03940753c560570f745e8a572.png" alt="\begin{eqnarray}
 u_n + a &gt; 0 &amp;\Longrightarrow&amp; r_{1f} = r_{1e}\nonumber \\
 u_n - a &lt; 0 &amp;\Longrightarrow&amp; r_{2f} = r_{2 \infty }\\
 u_n &gt; 0 &amp;\Longrightarrow&amp; r_{3f} = r_{3e} \nonumber \\
@@ -191,16 +193,16 @@ u_{\parallel f,1} &amp;=&amp; u_{\parallel e,1} \\
 u_{\parallel f,2} &amp;=&amp; u_{\parallel e,2} \\
 \rho_f &amp;=&amp; \rho_e \\
 a_f &amp;=&amp; \sqrt{ \frac{\gamma p_f }{ \rho_f} }
-\end{eqnarray}" /></p>
-</div><p>Note that the subscripts <img class="math" src="_images/math/60cae8405b16ede47d922e1b84b996cf28234d76.png" alt="n, \hspace{5pt} \parallel, \hspace{5pt} f, \hspace{5pt} e"/> and <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty"/> denote values normal/parallel to the boundary face, boundary cell values (unknowns), extrapolated value from interior and free-stream value respectively.</p>
+\end{eqnarray}"/></p>
+</div><p>Note that the subscripts <img class="math" src="_images/math/3bca250c512ef69058e22f6d8b747b7dc6944130.png" alt="n, \hspace{5pt} \parallel, \hspace{5pt} f, \hspace{5pt} e"/> and <img class="math" src="_images/math/91de26172b6cdc7da38314176fcc8023e48525e8.png" alt="\infty"/> denote values normal/parallel to the boundary face, boundary cell values (unknowns), extrapolated value from interior and free-stream value respectively.</p>
 <blockquote>
 <div><ul class="simple">
-<li>Subsonic Inflow (<img class="math" src="_images/math/64be93a2db3bd5fc798397525a4609d798f85b6b.png" alt="u_n &lt; 0"/> and <img class="math" src="_images/math/bfe25fb13b0171a37bf19234cd1fe31287073d1b.png" alt="|u_n| &lt; a"/>)</li>
+<li>Subsonic Inflow (<img class="math" src="_images/math/f4a3cf51b94dced62cf0526de4703666e2acd8fc.png" alt="u_n &lt; 0"/> and <img class="math" src="_images/math/f109589fdff4ce1ad8d0e7efcc6092da578a4a52.png" alt="|u_n| &lt; a"/>)</li>
 </ul>
 </div></blockquote>
-<p>In this case, <img class="math" src="_images/math/22c4b090b07c3eeb003252b13c526f72ae099757.png" alt="\lambda_1 &gt; 0, \hspace{5pt} \lambda_2 &lt; 0"/> and <img class="math" src="_images/math/4cf9b4fb535914ee5ed3fdca9d4011b0747354a7.png" alt="\lambda_3 &lt; 0"/>, which means that one characteristic wave is outgoing and two waves are incoming. The boundary values are then determined as follows,</p>
+<p>In this case, <img class="math" src="_images/math/519a2418cff63dbba7d4d92c1d99cef5a149fc7d.png" alt="\lambda_1 &gt; 0, \hspace{5pt} \lambda_2 &lt; 0"/> and <img class="math" src="_images/math/c08ce1cce59daeecdf8c1f2318630c7f582c1ccc.png" alt="\lambda_3 &lt; 0"/>, which means that one characteristic wave is outgoing and two waves are incoming. The boundary values are then determined as follows,</p>
 <div class="math">
-<p><img src="_images/math/eca6ccbff73ea8dfdf543b9a41be10dac43f85fb.png" alt="\begin{eqnarray}
+<p><img src="_images/math/5f65d821982c43b6423bcf1d008d3274cb49ddea.png" alt="\begin{eqnarray}
 u_n + a &gt; 0 &amp;\Longrightarrow&amp; r_{1f} = r_{1e}\nonumber \\
 u_n - a &lt; 0 &amp;\Longrightarrow&amp; r_{2f} = r_{2 \infty }\\
 u_n &lt; 0 &amp;\Longrightarrow&amp; r_{3f} = r_{3 \infty} \nonumber \\
@@ -210,7 +212,7 @@ u_{\parallel f,1} &amp;=&amp; u_{\parallel e,1} \\
 u_{\parallel f,2} &amp;=&amp; u_{\parallel e,2} \\
 \rho_f &amp;=&amp; \rho_{\infty} \\
 a_f &amp;=&amp; \sqrt{ \frac{\gamma p_f }{ \rho_f} }
-\end{eqnarray}" /></p>
+\end{eqnarray}"/></p>
 </div><ol class="arabic simple" start="4">
 <li>Implicit non-reflecting boundary condition</li>
 </ol>
@@ -230,7 +232,7 @@ a_f &amp;=&amp; \sqrt{ \frac{\gamma p_f }{ \rho_f} }
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="of_tut.html" title="OpenFOAM implementation"
+          <a href="of_tut.html" title="Implementation"
              >next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installation"
@@ -240,7 +242,7 @@ a_f &amp;=&amp; \sqrt{ \frac{\gamma p_f }{ \rho_f} }
     </div>
     <div class="footer">
         &copy; Copyright 2014, Pavanakumar Mohanamuraly.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
