@@ -1,7 +1,7 @@
 .. figure:: figures/logo_small.png 
 
-compressibleFoam Theory
-^^^^^^^^^^^^^^^^^^^^^^^^
+Theory
+^^^^^^^
 
 Finite Volume Methods for Euler's Equation
 -------------------------------------------

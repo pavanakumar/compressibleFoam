@@ -1,20 +1,20 @@
-Results using compressibleFoam
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. figure:: figures/logo_medium.png 
+
+Results
+^^^^^^^
 
 Supersonic wedge
 ----------------
-.. figure:: figures/result_11p3.jpg
 
-.. figure:: figures/result_22p5.jpg
+.. figure:: figures/results.png
+   :width: 30%
 
 .. figure:: figures/result_23p5.jpg
 
-Onera M6 Wing
---------------
-.. figure:: figures/cp_plot.png
+Onera M5 wing
+-------------
 
 .. figure:: figures/mach.jpg
 
-Parallel Scalability
---------------------
+.. figure:: figures/cp_plot.png
 
