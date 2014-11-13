@@ -20,18 +20,18 @@ Instructional workshop on OpenFOAM programming
 -----------------------------------------------
 
 1) Module 1: Basics of OpenFOAM data-types and fields
-:download:`part 1 <./pdfs/of_slides/week_1_day_1.pdf>`
-:download:`part 2 <./pdfs/of_slides/week_1_day_2.pdf>`
-:download:`part 3 <./pdfs/of_slides/week_1_day_3.pdf>`
+:download:`part 1 <pdfs/of_slides/week_1_day_1.pdf>`
+:download:`part 2 <pdfs/of_slides/week_1_day_2.pdf>`
+:download:`part 3 <pdfs/of_slides/week_1_day_3.pdf>`
 
 2) Module 2: Operators, LUD Matrices and others 
-:download:`part 1 <./pdfs/of_slides/week_2_day_1.pdf>`
-:download:`part 2 <./pdfs/of_slides/week_2_day_2.pdf>`
-:download:`part 3 <./pdfs/of_slides/week_2_day_3.pdf>`
+:download:`part 1 <pdfs/of_slides/week_2_day_1.pdf>`
+:download:`part 2 <pdfs/of_slides/week_2_day_2.pdf>`
+:download:`part 3 <pdfs/of_slides/week_2_day_3.pdf>`
 
 3) Module 3: Random topics of interest : Limiters and Parallelization, compressibleFoam solver
-:download:`part 1 <./pdfs/of_slides/week_3_day_1.pdf>`
-:download:`part 2 <./pdfs/of_slides/week_3_day_2.pdf>`
+:download:`part 1 <pdfs/of_slides/week_3_day_1.pdf>`
+:download:`part 2 <pdfs/of_slides/week_3_day_2.pdf>`
 
 
 Other course I offer,
