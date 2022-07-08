@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-    eulerSolver - A simple parallel first order Gas-dynamics solver
+    compressibleFoam - A simple parallel first order Gas-dynamics solver
                   based on the OpenFOAM library
     Copyright (C) 2012, Pavanakumar Mohanamuraly
 

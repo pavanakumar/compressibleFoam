@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-    eulerSolver - A simple parallel first order Gas-dynamics solver
+    compressibleFoam - A simple parallel first order Gas-dynamics solver
                   based on the OpenFOAM library
     Copyright (C) 2012, Pavanakumar Mohanamuraly
 
@@ -22,9 +22,9 @@
 word fluxScheme("roe");
 fluxSolver = &roe;
 
-if (mesh.schemesDict().found("fluxScheme"))
+if (mesh.schemes().found("fluxScheme"))
 {
-  fluxScheme = word(mesh.schemesDict().lookup("fluxScheme"));
+  fluxScheme = word(mesh.schemes().lookup("fluxScheme"));
   if ((fluxScheme == "roe") ){
     Info<< "fluxScheme: " << fluxScheme << endl;
     fluxSolver = &roe;
